@@ -12,7 +12,7 @@ class Ui_DL_Prg(object):
 #    dlBarValue = 0
  #   def setDLPrg(n):
  #       dlBarValue = n
-	#	
+#	window = QMainWindow()
     global dlBarValue
     dlBarValue = 20
     global name
@@ -41,26 +41,27 @@ class Ui_DL_Prg(object):
     def barUpdate(self, n):
         self.downloadBar.setProperty("value", n)
 
-    def nameUpdate(self, n):
-        name = n
-        Ui_DL_Prg().nameChange(QtWidgets.QDialog())
-        print(name)
-	
+
+
     def retranslateUi(self, DL_Prg):
         _translate = QtCore.QCoreApplication.translate
         DL_Prg.setWindowTitle(name)
-        #DL_Prg.setWindowTitle('Checkbox')
+        global window
+        window = DL_Prg
         self.downloadLabel.setText(_translate("DL_Prg", "Downloading DDLC..."))
 
-    def nameChange(self):
-        QtWidgets.QDialog().setWindowTitle("new name nice")
+    def nameChange(self, n):
+        window.setWindowTitle(n)
+
+    def labelChange(self, n):
+        self.downloadLabel.setText(n)
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
+    global DL_Prg
     DL_Prg = QtWidgets.QDialog()
     ui = Ui_DL_Prg()
     ui.setupUi(DL_Prg)
     DL_Prg.show()
     sys.exit(app.exec_())
-

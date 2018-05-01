@@ -10,7 +10,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 from ddlcdlsel import Ui_DL_Sel
 from ddlcaddmod import Ui_AddMod
-from ddlcfldsel import Ui_Fld_Sel
+#from ddlcfldsel import Ui_Fld_Sel
+
 
 class Ui_DDLCModManager(QMainWindow):
     def openDl_Sel(self):
@@ -26,10 +27,12 @@ class Ui_DDLCModManager(QMainWindow):
         self.window.show()
 
     def openFld_Sel(self):
+        from ddlcfldsel import Ui_Fld_Sel
         self.window = QtWidgets.QWidget()
         self.ui = Ui_Fld_Sel()
         self.ui.setupUi(self.window)
         self.window.show()
+
 
     def rmv_ModPopup(self):
         rmvChoice = QMessageBox.question(self, 'Confirm', "Are you sure you wish to permanently remove this mod?", QMessageBox.Yes | QMessageBox.Cancel)
@@ -51,32 +54,32 @@ class Ui_DDLCModManager(QMainWindow):
         self.gridLayout.addWidget(self.DDLCModList, 1, 0, 21, 1)
         self.addMod = QtWidgets.QPushButton(self.centralwidget)
         self.addMod.setObjectName("addMod")
-		
+
 		#Open Add Mod menu
         self.addMod.clicked.connect(self.openAddMod)
-		
+
         self.gridLayout.addWidget(self.addMod, 2, 1, 1, 1)
         self.removeMod = QtWidgets.QPushButton(self.centralwidget)
         self.removeMod.setObjectName("removeMod")
-		
+
 		#Open Warning before doing anything
         self.removeMod.clicked.connect(self.rmv_ModPopup)
-		
+
         self.gridLayout.addWidget(self.removeMod, 3, 1, 1, 1)
         self.ddlcDownload = QtWidgets.QPushButton(self.centralwidget)
         self.ddlcDownload.setObjectName("ddlcDownload")
 		#Open DL Selector
         self.ddlcDownload.clicked.connect(self.openDl_Sel)
-		
+
         self.gridLayout.addWidget(self.ddlcDownload, 7, 1, 1, 1)
         self.playBtn = QtWidgets.QPushButton(self.centralwidget)
         self.playBtn.setObjectName("playBtn")
         self.gridLayout.addWidget(self.playBtn, 1, 1, 1, 1)
         self.setBaseFolder = QtWidgets.QPushButton(self.centralwidget)
         self.setBaseFolder.setObjectName("setBaseFolder")
-		#Open Base Folder Selector		
+		#Open Base Folder Selector
         self.setBaseFolder.clicked.connect(self.openFld_Sel)
-		
+
         self.gridLayout.addWidget(self.setBaseFolder, 8, 1, 1, 1)
         self.copyMod = QtWidgets.QPushButton(self.centralwidget)
         self.copyMod.setObjectName("copyMod")
@@ -140,4 +143,3 @@ if __name__ == "__main__":
     ui.setupUi(DDLCModManager)
     DDLCModManager.show()
     sys.exit(app.exec_())
-

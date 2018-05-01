@@ -7,27 +7,34 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QFileDialog
+import os
 
 class Ui_Fld_Sel(object):
+
     def setupUi(self, Fld_Sel):
         Fld_Sel.setObjectName("Fld_Sel")
-        Fld_Sel.resize(550, 170)
+        Fld_Sel.resize(546, 170)
         Fld_Sel.setMaximumSize(QtCore.QSize(16777215, 170))
         Fld_Sel.setWhatsThis("")
         self.gridLayout = QtWidgets.QGridLayout(Fld_Sel)
         self.gridLayout.setObjectName("gridLayout")
-        self.chooseDirectory110 = QtWidgets.QToolButton(Fld_Sel)
-        self.chooseDirectory110.setObjectName("chooseDirectory110")
-        self.gridLayout.addWidget(self.chooseDirectory110, 1, 3, 1, 1)
-        self.folderPath110 = QtWidgets.QLineEdit(Fld_Sel)
-        self.folderPath110.setText("")
-        self.folderPath110.setObjectName("folderPath110")
-        self.gridLayout.addWidget(self.folderPath110, 1, 1, 1, 1)
+        self.openDirectory110 = QtWidgets.QToolButton(Fld_Sel)
+        self.openDirectory110.setObjectName("openDirectory110")
+        self.gridLayout.addWidget(self.openDirectory110, 1, 3, 1, 1)
+#Open DDLC/game folder if images-110.rpa is inside
+        self.openDirectory110.clicked.connect(self.openGameFld)
+
+
         self.chooseDirectory111 = QtWidgets.QToolButton(Fld_Sel)
         self.chooseDirectory111.setCheckable(False)
         self.chooseDirectory111.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
         self.chooseDirectory111.setObjectName("chooseDirectory111")
         self.gridLayout.addWidget(self.chooseDirectory111, 3, 3, 1, 1)
+#Choose folder that DDLC is stored in
+        self.chooseDirectory111.clicked.connect(self.chsFld)
+
+
         self.folderPath111 = QtWidgets.QLineEdit(Fld_Sel)
         self.folderPath111.setInputMask("")
         self.folderPath111.setText("")
@@ -41,6 +48,9 @@ class Ui_Fld_Sel(object):
         self.folderLabel111.setMaximumSize(QtCore.QSize(16777215, 24))
         self.folderLabel111.setObjectName("folderLabel111")
         self.gridLayout.addWidget(self.folderLabel111, 2, 1, 1, 1)
+        self.imagesPathLabel = QtWidgets.QLabel(Fld_Sel)
+        self.imagesPathLabel.setObjectName("imagesPathLabel")
+        self.gridLayout.addWidget(self.imagesPathLabel, 1, 1, 1, 1)
 
         self.retranslateUi(Fld_Sel)
         QtCore.QMetaObject.connectSlotsByName(Fld_Sel)
@@ -48,13 +58,34 @@ class Ui_Fld_Sel(object):
     def retranslateUi(self, Fld_Sel):
         _translate = QtCore.QCoreApplication.translate
         Fld_Sel.setWindowTitle(_translate("Fld_Sel", "Download DDLC"))
-        self.chooseDirectory110.setText(_translate("Fld_Sel", "..."))
-        self.folderPath110.setPlaceholderText(_translate("Fld_Sel", "Choose which folder v1.1.0\'s image.rpa is located."))
+        self.openDirectory110.setText(_translate("Fld_Sel", "..."))
         self.chooseDirectory111.setText(_translate("Fld_Sel", "..."))
         self.folderPath111.setPlaceholderText(_translate("Fld_Sel", "Choose which folder v1.1.1 is located."))
-        self.folderLabel110.setText(_translate("Fld_Sel", "DDLC v1.1.0 images.rpa Location"))
-        self.folderLabel111.setText(_translate("Fld_Sel", "DDLC v1.1.1 Location"))
+        self.folderLabel110.setText(_translate("Fld_Sel", "DDLC v1.1.0 images.rpa Location:"))
+        self.folderLabel111.setText(_translate("Fld_Sel", "DDLC v1.1.1 Location:"))
+        self.imagesPathLabel.setText(_translate("Fld_Sel", "images-110.rpa does not exist or is not in DDLC/game/"))
 
+    def chsFld(self):
+        global gameFld
+        gameFld = str(QFileDialog.getExistingDirectory(None, "Choose Directory"))
+        if gameFld != None:
+            self.folderPath111.setText(gameFld)
+        else:
+            pass
+
+    def openGameFld(self):
+#        print("niceu")
+        try:
+            if gameFld != None:
+#Checking if a location for DDLC has been set
+#                print("niceur")
+                if os.path.join(gameFld, "game") != None:
+                    os.startfile(os.path.join(gameFld, "game"))
+#Checking if DDLC installation is valid, i.e. does it have a "game" folder
+        except WindowsError:
+            print("No 'game' folder, reinstall DDLC")
+        except NameError:
+            print("No location set for DDLC")
 
 if __name__ == "__main__":
     import sys
@@ -64,4 +95,3 @@ if __name__ == "__main__":
     ui.setupUi(Fld_Sel)
     Fld_Sel.show()
     sys.exit(app.exec_())
-
