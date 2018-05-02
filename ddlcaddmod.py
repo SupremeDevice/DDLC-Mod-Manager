@@ -7,6 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QMessageBox
 
 class Ui_AddMod(object):
     def setupUi(self, AddMod):
@@ -35,11 +36,12 @@ class Ui_AddMod(object):
         self.gridLayout.addWidget(self.checkBox, 2, 0, 1, 1)
 
         self.retranslateUi(AddMod)
-#
-#Disabled to get launching working in the meantime. Don't forget to implement before release
-#
-#        self.modAddBtns.accepted.connect(AddMod.accept)
-#        self.modAddBtns.rejected.connect(AddMod.reject)
+
+        self.modAddBtns.accepted.connect(self.addMod)
+
+        self.modAddBtns.rejected.connect(AddMod.close)
+
+
         QtCore.QMetaObject.connectSlotsByName(AddMod)
 
     def retranslateUi(self, AddMod):
@@ -51,6 +53,16 @@ class Ui_AddMod(object):
         self.checkBox.setText(_translate("AddMod", "Extract Base Game Scripts"))
 
 
+    def addMod(self):
+        print("getting name of new mod")
+        newName = self.nameInputEdit.text()
+#        newName = "oofers"
+        if newName == (""):
+            QMessageBox.question(None, 'Error', "Please input a name for the new mod.", QMessageBox.Ok)
+        else:
+            print(newName)
+
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
@@ -59,4 +71,3 @@ if __name__ == "__main__":
     ui.setupUi(AddMod)
     AddMod.show()
     sys.exit(app.exec_())
-

@@ -7,12 +7,23 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog, QMessageBox
 import os
+import configparser
+import io
 
 class Ui_Fld_Sel(object):
 
     def setupUi(self, Fld_Sel):
+        global gameFld
+        config = configparser.ConfigParser(allow_no_value=True)
+        config.read('config.ini')
+        gameFld = config['DEFAULT']['ddlcfolder']
+#        print(gameFld)
+
+
+
+
         Fld_Sel.setObjectName("Fld_Sel")
         Fld_Sel.resize(546, 170)
         Fld_Sel.setMaximumSize(QtCore.QSize(16777215, 170))
@@ -61,15 +72,30 @@ class Ui_Fld_Sel(object):
         self.openDirectory110.setText(_translate("Fld_Sel", "..."))
         self.chooseDirectory111.setText(_translate("Fld_Sel", "..."))
         self.folderPath111.setPlaceholderText(_translate("Fld_Sel", "Choose which folder v1.1.1 is located."))
+#Set it to display game folder if set in config.ini
+        if gameFld != None:
+            self.folderPath111.setText(gameFld)
+
+
         self.folderLabel110.setText(_translate("Fld_Sel", "DDLC v1.1.0 images.rpa Location:"))
         self.folderLabel111.setText(_translate("Fld_Sel", "DDLC v1.1.1 Location:"))
         self.imagesPathLabel.setText(_translate("Fld_Sel", "images-110.rpa does not exist or is not in DDLC/game/"))
 
     def chsFld(self):
         global gameFld
-        gameFld = str(QFileDialog.getExistingDirectory(None, "Choose Directory"))
-        if gameFld != None:
+        tempFld = str(QFileDialog.getExistingDirectory(None, "Choose Directory"))
+        if tempFld != '':
+            print(tempFld)
+            gameFld = tempFld
+            #Update text on folder selector dialog to reflect new location
             self.folderPath111.setText(gameFld)
+            #Save new game directory to config.ini
+            config = configparser.ConfigParser(allow_no_value=True)
+            config.read('config.ini')
+            config['DEFAULT']['ddlcfolder'] = gameFld
+
+            with open('config.ini', 'w') as configfile:
+                config.write(configfile)
         else:
             pass
 
@@ -84,6 +110,7 @@ class Ui_Fld_Sel(object):
 #Checking if DDLC installation is valid, i.e. does it have a "game" folder
         except WindowsError:
             print("No 'game' folder, reinstall DDLC")
+            QMessageBox.question(None, 'Error', "There is no '/DDLC/game' folder or DDLC location is incorrect, reinstall DDLC.", QMessageBox.Ok)
         except NameError:
             print("No location set for DDLC")
 

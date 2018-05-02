@@ -10,7 +10,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 from ddlcdlsel import Ui_DL_Sel
 from ddlcaddmod import Ui_AddMod
-#from ddlcfldsel import Ui_Fld_Sel
+from ddlcfldsel import Ui_Fld_Sel
 
 
 class Ui_DDLCModManager(QMainWindow):
@@ -27,12 +27,10 @@ class Ui_DDLCModManager(QMainWindow):
         self.window.show()
 
     def openFld_Sel(self):
-        from ddlcfldsel import Ui_Fld_Sel
         self.window = QtWidgets.QWidget()
         self.ui = Ui_Fld_Sel()
         self.ui.setupUi(self.window)
         self.window.show()
-
 
     def rmv_ModPopup(self):
         rmvChoice = QMessageBox.question(self, 'Confirm', "Are you sure you wish to permanently remove this mod?", QMessageBox.Yes | QMessageBox.Cancel)
