@@ -48,7 +48,7 @@ class Ui_DL_Sel(object):
             dlTest += 1
             print("dlImages = true, downloading images-110.rpa")
             url = "http://drive.google.com/uc?export=download&id=1rfE66WybJiF7XKHH0-NGksTyXa6Gt3xh"
-#            urllib.request.urlretrieve(url, os.path.join(os.getcwd(), 'temp\images-110.rpa'))
+            urllib.request.urlretrieve(url, os.path.join(os.getcwd(), 'temp\images-110.rpa'))
         else:
             pass
         if dlTest == 0:
@@ -100,7 +100,9 @@ class Ui_DL_Sel(object):
     def retranslateUi(self, DL_Sel):
         _translate = QtCore.QCoreApplication.translate
         DL_Sel.setWindowTitle(_translate("DL_Sel", "Download DDLC"))
-        self.buttonDownload.setText(_translate("DL_Sel", "Download"))
+
+        #Fix button after implementing obvs
+        self.buttonDownload.setText(_translate("DL_Sel", "Download (Not Implemented Yet)"))
         self.savePath111.setPlaceholderText(_translate("DL_Sel", "Choose where to place after download. Leave blank for default location in Mod Manager folder."))
         self.checkDownload110.setText(_translate("DL_Sel", " Download DDLC 1.1.0 images.rpa"))
         self.chooseDirectory111.setText(_translate("DL_Sel", "..."))

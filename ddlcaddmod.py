@@ -8,9 +8,13 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
+import os, sys, configparser, shutil
+
 
 class Ui_AddMod(object):
-    def setupUi(self, AddMod):
+    def setupUi(self, AddMod, n):
+        global gameFld
+        gameFld = n
         AddMod.setObjectName("AddMod")
         AddMod.resize(491, 145)
         AddMod.setMaximumSize(QtCore.QSize(16777215, 200))
@@ -41,7 +45,6 @@ class Ui_AddMod(object):
 
         self.modAddBtns.rejected.connect(AddMod.close)
 
-
         QtCore.QMetaObject.connectSlotsByName(AddMod)
 
     def retranslateUi(self, AddMod):
@@ -61,7 +64,45 @@ class Ui_AddMod(object):
             QMessageBox.question(None, 'Error', "Please input a name for the new mod.", QMessageBox.Ok)
         else:
             print(newName)
+            #newDir = bytes(newName, 'utf-8').decode('utf-8', 'ignore')
+            global newDir
+            newDir = newName
+            newDir = "".join(i for i in newDir if i not in "\/:*?<>|")
+            if newDir != newName:
+                #print("Error, folder name will be changed to " + newDir + " from " + newName)
+                proceed = QMessageBox.question(None, 'Warning', "Folder name will be changed to '" + newDir + "' from '" + newName + "'", QMessageBox.Ok | QMessageBox.Cancel)
+                if proceed == QMessageBox.Ok:
+                    self.createDir()
+            else:
+#                print(newDir)
+                print("Directory name is valid")
+                self.createDir()
 
+
+    def createDir(self):
+        global newDir
+        newDir = os.path.join(os.getcwd(), "mods", newDir)
+        print(newDir)
+        if not os.path.exists(newDir):
+            print("Copying DDLC to mod folder")
+            shutil.copytree(gameFld, newDir)
+            os.startfile(newDir)
+            self.reloadDDLC()
+        else:
+            proceed = QMessageBox.question(None, 'Confirm', "Folder already exists, do you wish to proceed?", QMessageBox.Yes | QMessageBox.No)
+            if proceed == QMessageBox.Yes:
+                print("Proceed anyways")
+                shutil.rmtree(newDir)
+                print('Removing ' + newDir)
+                print("Copying DDLC to mod folder")
+                shutil.copytree(gameFld, newDir)
+                os.startfile(newDir)
+            else:
+                pass
+
+    def reloadDDLC(self):
+        os.startfile('ddlc.py')
+        sys.exit()
 
 if __name__ == "__main__":
     import sys
