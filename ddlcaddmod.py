@@ -8,13 +8,16 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
-import os, sys, configparser, shutil
+import os, sys, configparser, shutil, platform
 
 
 class Ui_AddMod(object):
+
     def setupUi(self, AddMod, n):
         global gameFld
         gameFld = n
+        global session
+        session = AddMod
         AddMod.setObjectName("AddMod")
         AddMod.resize(491, 145)
         AddMod.setMaximumSize(QtCore.QSize(16777215, 200))
@@ -83,11 +86,22 @@ class Ui_AddMod(object):
         global newDir
         newDir = os.path.join(os.getcwd(), "mods", newDir)
         print(newDir)
+        curOS = platform.system()
         if not os.path.exists(newDir):
             print("Copying DDLC to mod folder")
+#            os.mkdir(newDir)
             shutil.copytree(gameFld, newDir)
-            os.startfile(newDir)
-            self.reloadDDLC()
+            if curOS == 'Windows':
+                os.startfile(newDir)
+            elif curOS == 'Linux':
+                print("Attempting to open game folder...")
+                #os.system("xdg-open " + newDir)
+                os.system('nautilus "' + newDir + '"')
+                print("Folder opened successfuly!")
+            elif curOS == 'Darwin':
+                os.system("open " + newDir)
+            print("Attempting to close game window")
+            session.accept()
         else:
             proceed = QMessageBox.question(None, 'Confirm', "Folder already exists, do you wish to proceed?", QMessageBox.Yes | QMessageBox.No)
             if proceed == QMessageBox.Yes:
@@ -95,14 +109,23 @@ class Ui_AddMod(object):
                 shutil.rmtree(newDir)
                 print('Removing ' + newDir)
                 print("Copying DDLC to mod folder")
+                print()
                 shutil.copytree(gameFld, newDir)
-                os.startfile(newDir)
+                if curOS == 'Windows':
+                    os.startfile(newDir)
+                elif curOS == 'Linux':
+                    print("Attempting to open game folder")
+                    #os.system("xdg-open " + newDir)
+                    os.system('nautilus "' + newDir + '"')
+                    print("Folder opened successfuly!")
+                elif curOS == 'Darwin':
+                    os.system("open " + newDir)
+                print("Attempting to close game window")
+                session.accept()
             else:
                 pass
 
-    def reloadDDLC(self):
-        os.startfile('ddlc.py')
-        sys.exit()
+
 
 if __name__ == "__main__":
     import sys

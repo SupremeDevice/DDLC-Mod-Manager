@@ -8,7 +8,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from ddlcdlsel2 import Ui_dlMethod
-from PyQt5.QtWidgets import QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QFileDialog, QMessageBox, QDialog
 import os
 import configparser
 
@@ -37,10 +37,11 @@ class Ui_DL_Sel(object):
                 print("Using default path")
 
             print("dlDDLC = true, opening dl method selection Dialog")
-            self.window = QtWidgets.QWidget()
-            self.ui = Ui_dlMethod()
-            self.ui.setupUi(self.window)
-            self.window.show()
+            dialog = QDialog()
+            dialog.ui = Ui_dlMethod()
+            dialog.ui.setupUi(dialog)
+            if dialog.exec_():
+                pass
         else:
             pass
 
@@ -48,7 +49,7 @@ class Ui_DL_Sel(object):
             dlTest += 1
             print("dlImages = true, downloading images-110.rpa")
             url = "http://drive.google.com/uc?export=download&id=1rfE66WybJiF7XKHH0-NGksTyXa6Gt3xh"
-            urllib.request.urlretrieve(url, os.path.join(os.getcwd(), 'temp\images-110.rpa'))
+            urllib.request.urlretrieve(url, os.path.join(os.getcwd(), 'images-110.rpa'))
         else:
             pass
         if dlTest == 0:
@@ -77,8 +78,6 @@ class Ui_DL_Sel(object):
         self.gridLayout.addWidget(self.checkDownload110, 0, 1, 1, 1)
 #       Set images-110.rpa to be downloaded
         self.checkDownload110.clicked.connect(self.chkImages)
-
-
         self.chooseDirectory111 = QtWidgets.QToolButton(DL_Sel)
         self.chooseDirectory111.setCheckable(False)
         self.chooseDirectory111.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
@@ -86,7 +85,6 @@ class Ui_DL_Sel(object):
         self.gridLayout.addWidget(self.chooseDirectory111, 2, 3, 1, 1)
 #       Select folder to save DDLC, same code as in ddlcfldsel.py
         self.chooseDirectory111.clicked.connect(self.chsFld)
-
         self.checkDownload111 = QtWidgets.QCheckBox(DL_Sel)
         self.checkDownload111.setObjectName("checkDownload111")
         self.gridLayout.addWidget(self.checkDownload111, 1, 1, 1, 1)
@@ -96,6 +94,7 @@ class Ui_DL_Sel(object):
 
         self.retranslateUi(DL_Sel)
         QtCore.QMetaObject.connectSlotsByName(DL_Sel)
+
 
     def retranslateUi(self, DL_Sel):
         _translate = QtCore.QCoreApplication.translate
@@ -120,7 +119,6 @@ class Ui_DL_Sel(object):
             config = configparser.ConfigParser(allow_no_value=True)
             config.read('config.ini')
             config['DEFAULT']['ddlcfolder'] = gameFld
-
             with open('config.ini', 'w') as configfile:
                 config.write(configfile)
         else:
@@ -131,7 +129,6 @@ class Ui_DL_Sel(object):
     def chkImages(self):
         global dlImages
         dlImages = not dlImages
-        #print(dlImages)
         self.chkStatus()
 
     def chkDDLC(self):
@@ -141,8 +138,6 @@ class Ui_DL_Sel(object):
 
 
     def chkStatus(self):
-    #    global dlImages
-    #    global dlDDLC
         print(dlDDLC)
         print(dlImages)
 

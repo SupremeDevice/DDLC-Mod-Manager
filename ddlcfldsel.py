@@ -92,10 +92,11 @@ class Ui_Fld_Sel(object):
             pass
 
     def saveConfig(self):
-            if os.path.exists(self.folderPath111.text()):
+            textPath = os.path.expanduser(self.folderPath111.text())
+            if os.path.exists(textPath):
                 config = configparser.ConfigParser(allow_no_value=True)
                 config.read('config.ini')
-                config['DEFAULT']['ddlcfolder'] = self.folderPath111.text()
+                config['DEFAULT']['ddlcfolder'] = textPath
                 with open('config.ini', 'w') as configfile:
                     config.write(configfile)
                 process.hide()

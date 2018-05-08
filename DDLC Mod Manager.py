@@ -1,3 +1,4 @@
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file '.\ddlc modmanager.ui'
@@ -8,38 +9,44 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
+from PyQt5.QtGui import QIcon
 from ddlcdlsel import Ui_DL_Sel
 from ddlcaddmod import Ui_AddMod
 from ddlcfldsel import Ui_Fld_Sel
 import os, shutil, configparser, io, platform
-
+import time
 
 
 class Ui_DDLCModManager(QMainWindow):
+
     def openDl_Sel(self):
-        self.window = QtWidgets.QWidget()
-        self.ui = Ui_DL_Sel()
-        self.ui.setupUi(self.window)
-        self.window.show()
+        dialog = QDialog()
+        dialog.ui = Ui_DL_Sel()
+        dialog.ui.setupUi(dialog)
+        if dialog.exec_():
+            pass
 
     def openAddMod(self):
         config = configparser.ConfigParser(allow_no_value=True)
         config.read('config.ini')
         gameFld = config['DEFAULT']['ddlcfolder']
         if os.path.exists(gameFld):
-            self.window = QtWidgets.QWidget()
-            self.ui = Ui_AddMod()
-            self.ui.setupUi(self.window, gameFld)
-            self.window.show()
+            dialog = QDialog()
+            dialog.ui = Ui_AddMod()
+            dialog.ui.setupUi(dialog, gameFld)
+            if dialog.exec_():
+                print("Mod added, refreshing.")
+                self.refreshList()
         else:
             QMessageBox.question(self, 'Error', "Please download DDLC or set base game folder location first.", QMessageBox.Ok)
 
 
     def openFld_Sel(self):
-        self.window = QtWidgets.QWidget()
-        self.ui = Ui_Fld_Sel()
-        self.ui.setupUi(self.window)
-        self.window.show()
+        dialog = QDialog()
+        dialog.ui = Ui_Fld_Sel()
+        dialog.ui.setupUi(dialog)
+        if dialog.exec_():
+            pass
 
 #Gets selected mod of the list
     def on_change(self):
@@ -50,13 +57,13 @@ class Ui_DDLCModManager(QMainWindow):
     def playMod(self):
         try:
             if currentMod != '':
-                if platform.system() == "Darwin":
+                if curOS == "Darwin":
                     print("wow you're actually using this on a mac? nice! if only I had one I could test on heh")
                 else:
                     gameDir = os.path.join(basemmDir, "mods", currentMod)
-                    if platform.system() == "Windows":
+                    if curOS == "Windows":
                         os.startfile(os.path.join(gameDir, "DDLC.exe"))
-                    elif platform.system() == "Linux":
+                    elif curOS == "Linux":
                         os.startfile(os.path.join(gameDir, "DDLC.sh"))
                     else:
                         QMessageBox.question(self, 'Error', "Sorry, you have an unknown OS. Please launch DDLC maually from " + os.path.join(basemmDir, "mods"), QMessageBox.Ok)
@@ -138,13 +145,23 @@ class Ui_DDLCModManager(QMainWindow):
             #Make sure a mod has been selected
             if currentMod != '':
                 gameFld = os.path.join(basemmDir, "mods", currentMod)
-                os.startfile(gameFld)
+                if curOS == 'Windows':
+                    os.startfile(gameFld)
+                elif curOS == 'Linux':
+                    os.system("xdg-open " + gameFld)
+                elif curOS == 'Darwin':
+                    os.system("open " + gameFld)
             else:
                 QMessageBox.question(self, 'Error', "Please select a mod to browse first.", QMessageBox.Ok)
         except NameError:
             QMessageBox.question(self, 'Error', "Please select a mod to browse first.", QMessageBox.Ok)
 
     def setupUi(self, DDLCModManager):
+        global ddlcmmui
+        ddlcmmui = self
+        global curOS
+        curOS = platform.system()
+
         DDLCModManager.setObjectName("DDLCModManager")
         DDLCModManager.resize(398, 506)
         DDLCModManager.setIconSize(QtCore.QSize(32, 32))
@@ -225,8 +242,14 @@ class Ui_DDLCModManager(QMainWindow):
         self.actionCheck_for_Updates.setObjectName("actionCheck_for_Updates")
         self.actionView_Source = QtWidgets.QAction(DDLCModManager)
         self.actionView_Source.setObjectName("actionView_Source")
+        #open up link to github source
+        self.actionView_Source.triggered.connect(self.clkSource)
+
         self.actionInfo = QtWidgets.QAction(DDLCModManager)
         self.actionInfo.setObjectName("actionInfo")
+        #open up info box
+        self.actionInfo.triggered.connect(self.clkInfo)
+
         self.menuUpdates.addAction(self.actionCheck_for_Updates)
         self.menuUpdates.addAction(self.actionView_Source)
         self.menuUpdates.addAction(self.actionInfo)
@@ -254,6 +277,18 @@ class Ui_DDLCModManager(QMainWindow):
         self.actionView_Source.setText(_translate("DDLCModManager", "View Source"))
         self.actionInfo.setText(_translate("DDLCModManager", "Info"))
 
+    def clkSource(self):
+        print("source button clicked")
+        if curOS == "Windows":
+            os.system("start https://github.com/SupremeDevice/DDLC-Mod-Manager")
+        if curOS == "Linux":
+            os.system("xdg-open https://github.com/SupremeDevice/DDLC-Mod-Manager")
+        if curOS == "Darwin":
+            os.system("open https://github.com/SupremeDevice/DDLC-Mod-Manager")
+
+    def clkInfo(self):
+        QMessageBox.about(self, "Info", "DDLC Mod Manager v1.0\nDeveloped by SupremeDevice\nNot affiliated with Team Salvato")
+
     def getMods(self):
         next(os.walk('.'))[1]
         global basemmDir
@@ -280,6 +315,7 @@ class Ui_DDLCModManager(QMainWindow):
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
+    app.setWindowIcon(QIcon('icon.png'))
     DDLCModManager = QtWidgets.QMainWindow()
     ui = Ui_DDLCModManager()
     ui.setupUi(DDLCModManager)
