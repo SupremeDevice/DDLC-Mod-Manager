@@ -101,7 +101,7 @@ class Ui_DL_Sel(object):
         DL_Sel.setWindowTitle(_translate("DL_Sel", "Download DDLC"))
 
         #Fix button after implementing obvs
-        self.buttonDownload.setText(_translate("DL_Sel", "Download (Not Implemented Yet)"))
+        self.buttonDownload.setText(_translate("DL_Sel", "Download"))
         self.savePath111.setPlaceholderText(_translate("DL_Sel", "Choose where to place after download. Leave blank for default location in Mod Manager folder."))
         self.checkDownload110.setText(_translate("DL_Sel", " Download DDLC 1.1.0 images.rpa"))
         self.chooseDirectory111.setText(_translate("DL_Sel", "..."))

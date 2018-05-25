@@ -7,6 +7,8 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import configparser
+import platform
 
 class Ui_dlMethod(object):
     def setupUi(self, dlMethod):
@@ -48,10 +50,38 @@ class Ui_dlMethod(object):
         self.radioFirefox.setText(_translate("dlMethod", "Automatic - Firefox"))
         self.radioChrome.setText(_translate("dlMethod", "Automatic - Chrome"))
         self.label.setText(_translate("dlMethod", "How do you want to download DDLCv1.1.1? \n"
-"(images-110.rpa will always download automatically.)"))
+"(images-110.rpa will always download automatically if selected.)"))
         self.radioManual.setText(_translate("dlMethod", "Manual Download (New browser window/tab will open up)"))
         self.pushButton.setText(_translate("dlMethod", "Ok"))
+
+        self.pushButton.clicked.connect(self.download)
+
         self.pushButton_2.setText(_translate("dlMethod", "Cancel"))
+
+
+    def download(self):
+        if self.radioManual.isChecked():
+            print("Manual DL selected.")
+            #Open ddlc.moe
+            curOS = platform.system()
+            if curOS == "Windows":
+                os.system("start https://ddlc.moe")
+            if curOS == "Linux":
+                os.system("xdg-open https://ddlc.moe")
+            if curOS == "Darwin":
+                os.system("open https://ddlc.moe")
+        else:
+            if self.radioFirefox.isChecked():
+                curBr = "Firefox"
+            elif self.radioChrome.isChecked():
+                curBr = "Chrome"
+            config = configparser.ConfigParser(allow_no_value=True)
+            config.read('config.ini')
+            config['DEFAULT']['dlBrowser'] = curBr
+            with open('config.ini', 'w') as configfile:
+                config.write(configfile)
+            import itchDownload
+
 
 
 if __name__ == "__main__":
